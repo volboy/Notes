@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Notes</string>
+    <string name="txtViewTitleStr">Главный экран приложения</string>
+    <string name="edtTextTitleHinеStr">Введите текст</string>
+    <string name="btnToDetailsFragmentStr">Детали</string>
+    <string name="txtViewDetailsStr">Детали</string>
+    <string name="edtTextDetailsStr">Текст из первого фрагмента</string>
+    <string name="btnToTitleFragmentStr">Главное окно</string>
 </resources>
