@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity implements TitleFragment.Tit
                 .beginTransaction()
                 .add(R.id.fragments_container, new TitleFragment(), TitleFragment.TITLE_FRAGMENT_TAG)
                 .commit();
+
+
     }
 
     //реализуем метод интерфйса TitleFragmentInterface
