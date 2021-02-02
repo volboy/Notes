@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.recyclerView;
 
 public class NewsItem {
     public String title;

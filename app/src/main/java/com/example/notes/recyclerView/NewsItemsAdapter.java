@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.recyclerView;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -6,7 +6,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.notes.R;
+
 import java.util.List;
 
 public class NewsItemsAdapter extends RecyclerView.Adapter {

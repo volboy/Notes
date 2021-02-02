@@ -1,10 +1,13 @@
-package com.example.notes;
+package com.example.notes.recyclerView;
 
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+import com.example.notes.R;
+import com.example.notes.recyclerView.NewsItem;
 
 public class NewsItemViewHolder extends ViewHolder {
     TextView txtViewItemTitle, txtViewItemSubTitle;

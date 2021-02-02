@@ -12,8 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.notes.recyclerView.NewsItem;
+import com.example.notes.recyclerView.NewsItemRepository;
+import com.example.notes.recyclerView.NewsItemsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +32,7 @@ public class TitleFragment extends Fragment {
     Button btnToDetailsFragment, btnAdd, btnDelete;
     TextView txtViewTitle;
     EditText edtTextTitle;
+    private Context context;
 
     //объявление интерфейса с одним методом
     public interface TitleFragmentInterface {
@@ -48,6 +54,7 @@ public class TitleFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof TitleFragmentInterface) {
             titleFragmentInterface = (TitleFragmentInterface) context;
         } else {
@@ -62,14 +69,40 @@ public class TitleFragment extends Fragment {
         getViewsId(view);
         //создаем коллекцию новостей
         newsItemList.addAll(NewsItemRepository.getInstance().getNewsItemList());
+
         //создаем RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+
         //создаем Layout менеджер для RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.VERTICAL, false);
+
         //устанавливаем RecyclerView наш LinearLayoutManager
         recyclerView.setLayoutManager(linearLayoutManager);
+
         //устанавливаем адаптер
         recyclerView.setAdapter(new NewsItemsAdapter(inflater, newsItemList));
+
+        //кастомизируем разделитель
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(context.getDrawable(R.drawable.black_line));
+
+        //Добавляем разделитель
+        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        //подгрузка данных при достижении конца списка
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                //если последний видимый обьект в recyclerView равен последнему элементу
+                //в коллекции, то создать еще элементов в коллекции
+                if (linearLayoutManager.findLastCompletelyVisibleItemPosition() == newsItemList.size()) {
+                    newsItemList.addAll(NewsItemRepository.getInstance().getNewsItemList());
+                    recyclerView.getAdapter().notifyItemRangeInserted(newsItemList.size(), 30);
+                }
+            }
+        });
 
         btnToDetailsFragment.setOnClickListener(new View.OnClickListener() {
             @Override

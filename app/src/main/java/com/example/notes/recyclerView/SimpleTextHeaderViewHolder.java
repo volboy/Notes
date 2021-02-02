@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.recyclerView;
 
 import android.view.View;
 
