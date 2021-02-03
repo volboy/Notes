@@ -2,6 +2,7 @@ package com.example.notes;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +17,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notes.internet.PostsJSON;
 import com.example.notes.recyclerView.NewsItem;
 import com.example.notes.recyclerView.NewsItemRepository;
 import com.example.notes.recyclerView.NewsItemsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TitleFragment extends Fragment {
 
@@ -68,7 +74,7 @@ public class TitleFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_title, container, false);
         getViewsId(view);
         //создаем коллекцию новостей
-        newsItemList.addAll(NewsItemRepository.getInstance().getNewsItemList());
+        //newsItemList.addAll(NewsItemRepository.getInstance().getNewsItemList());
 
         //создаем RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
@@ -79,8 +85,36 @@ public class TitleFragment extends Fragment {
         //устанавливаем RecyclerView наш LinearLayoutManager
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        //устанавливаем адаптер
-        recyclerView.setAdapter(new NewsItemsAdapter(inflater, newsItemList));
+
+
+        //Загружаем данные с сайта
+        NotesApp.getInstance().postsService.getPosts().enqueue(new Callback<PostsJSON>() {
+            @Override
+            public void onResponse(Call<PostsJSON> call, Response<PostsJSON> response) {
+                    //возращаются запросы на сервер
+                    //коды ответа (404, 500, c 200-300 успешные)
+                    if (response.isSuccessful()){
+                        //создаем обьект куда скидываем обьекты JSON
+                        PostsJSON postsJSON=response.body();
+                        //в коллекцию которая связана с RecyclerView скидываем наш обьект через класс NewsItem
+                        //мы разделили сущности чтобы не менять название полей, если они изменятся на сервере
+                        newsItemList.clear();
+                        newsItemList.add(new NewsItem(postsJSON));
+                        //устанавливаем адаптер
+                        recyclerView.setAdapter(new NewsItemsAdapter(inflater, newsItemList));
+                    }else {
+
+                    }
+            }
+
+            @Override
+            public void onFailure(Call<PostsJSON> call, Throwable t) {
+                //нет интернета, не валидный JSON
+                Log.i("Retrofit", t.getMessage());
+            }
+        });
+
+
 
         //кастомизируем разделитель
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
