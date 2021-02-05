@@ -11,12 +11,12 @@ public class NewsItemRepository {
     private static NewsItemRepository instance;
 
     //ПРИВАТНЫЙ КОНСТРУКТОР
-    private NewsItemRepository() {
+   /* private NewsItemRepository() {
         //заполняем данные в цикле
         for (int i = 0; i < 30; i++) {
-            newsItemList.add(new NewsItem("Заголовок" + i, "Подзаголовок" + i, 0));
+            newsItemList.add(new NewsItem("Заголовок" + i, "Подзаголовок" + i, null));
         }
-    }
+    }*/
 
     //проверяем был ли создан ранее класс NewsItemRepository
     //если нет создаем

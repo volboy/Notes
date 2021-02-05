@@ -2,13 +2,13 @@ package com.example.notes;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notes.internet.PostJSON;
 import com.example.notes.internet.PostsJSON;
 import com.example.notes.recyclerView.NewsItem;
 import com.example.notes.recyclerView.NewsItemRepository;
@@ -86,34 +87,38 @@ public class TitleFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
 
-
         //Загружаем данные с сайта
         NotesApp.getInstance().postsService.getPosts().enqueue(new Callback<PostsJSON>() {
             @Override
             public void onResponse(Call<PostsJSON> call, Response<PostsJSON> response) {
-                    //возращаются запросы на сервер
-                    //коды ответа (404, 500, c 200-300 успешные)
-                    if (response.isSuccessful()){
-                        //создаем обьект куда скидываем обьекты JSON
-                        PostsJSON postsJSON=response.body();
-                        //в коллекцию которая связана с RecyclerView скидываем наш обьект через класс NewsItem
-                        //мы разделили сущности чтобы не менять название полей, если они изменятся на сервере
-                        newsItemList.clear();
-                        newsItemList.add(new NewsItem(postsJSON));
-                        //устанавливаем адаптер
-                        recyclerView.setAdapter(new NewsItemsAdapter(inflater, newsItemList));
-                    }else {
+                //возращаются запросы на сервер
+                //коды ответа (404, 500, c 200-300 успешные)
+                if (response.isSuccessful()) {
+                    Toast.makeText(context, response.code() + "", Toast.LENGTH_LONG).show();
+                    //создаем обьект куда скидываем обьекты JSON
+                    List<PostJSON> posts = new ArrayList<PostJSON>();
+                    posts.addAll(response.body().result);
 
+                    //в коллекцию которая связана с RecyclerView скидываем наш обьект через класс NewsItem
+                    //мы разделили сущности чтобы не менять название полей, если они изменятся на сервере
+                    newsItemList.clear();
+                    for (PostJSON item: posts){
+                        newsItemList.add(new NewsItem(item));
                     }
+
+                    //устанавливаем адаптер
+                    recyclerView.setAdapter(new NewsItemsAdapter(inflater, newsItemList));
+                } else {
+                    Toast.makeText(context, Toast.LENGTH_LONG, response.code()).show();
+                }
             }
 
             @Override
             public void onFailure(Call<PostsJSON> call, Throwable t) {
                 //нет интернета, не валидный JSON
-                Log.i("Retrofit", t.getMessage());
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-
 
 
         //кастомизируем разделитель
@@ -125,7 +130,7 @@ public class TitleFragment extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         //подгрузка данных при достижении конца списка
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+      /*  recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -136,7 +141,7 @@ public class TitleFragment extends Fragment {
                     recyclerView.getAdapter().notifyItemRangeInserted(newsItemList.size(), 30);
                 }
             }
-        });
+        });*/
 
         btnToDetailsFragment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,15 +161,15 @@ public class TitleFragment extends Fragment {
             }
         });
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
+       /* btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //удаляем третий элемент в коллекции
-                newsItemList.add(2, new NewsItem("Добавленная новость", "Кошка родила котят...", 0));
+                newsItemList.add(2, new NewsItem("Добавленная новость", "Кошка родила котят...", null));
                 //обновляем адаптер, указывая какой элемент удалили
                 recyclerView.getAdapter().notifyItemInserted(3);
             }
-        });
+        });*/
         return view;
     }
 

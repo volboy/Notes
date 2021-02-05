@@ -1,21 +1,25 @@
 package com.example.notes.recyclerView;
 
-import com.example.notes.internet.PostsJSON;
+import android.net.Uri;
+
+import com.example.notes.internet.PostJSON;
+
+import java.net.URL;
+import java.util.List;
+
+import retrofit2.http.Url;
 
 public class NewsItem {
     public String title;
     public String subtitle;
-    public int color;
+    public URL gifURL;
 
-    public NewsItem(String title, String subtitle, int color) {
-        this.title = title;
-        this.subtitle = subtitle;
-        this.color = color;
+
+    public NewsItem(PostJSON postJSON) {
+        this.title = postJSON.description;
+        this.subtitle = postJSON.date;
+        this.gifURL = postJSON.gifURL;
     }
 
-    public NewsItem(PostsJSON postsJSON) {
-        this.title = postsJSON.description;
-        this.subtitle = postsJSON.date;
-    }
 
 }

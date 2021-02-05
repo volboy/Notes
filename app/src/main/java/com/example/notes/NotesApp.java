@@ -36,7 +36,7 @@ public class NotesApp extends Application {
         //инициализируем Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl("https://developerslife.ru/")
+                .baseUrl("https://developerslife.ru/latest/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         //Создаем сервис (по сути сервис -это описание наших endpoints
